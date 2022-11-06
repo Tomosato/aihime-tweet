@@ -1,0 +1,11 @@
+{
+    "twitter_api_key":"Twitter API キー",
+    "twitter_api_key_secret": "Twitter API キーシークレット",
+    "twitter_bearer_token": "Bearer トークン",
+    "twitter_access_token": "Twitter アクセストークン",
+    "twitter_access_token_secret": "Twitter アクセストークンシークレット",
+    "twitter_id": 12345678, <- Twitterのuser id
+    "twitter_screen_name": "sample", <- Twitterでメンションつけるときの名前
+    "discord_bot_token" : "Discord のBotトークン",
+    "discord_message_target": 9012345678 DiscordのチャンネルID
+}
