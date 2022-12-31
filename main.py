@@ -35,7 +35,7 @@ def create_massages():
                                         tweet_fields=tweet_fields,
                                         start_time=past_created_at).data
     post_target = list()
-    for tweet_data in response:
+    for tweet_data in reversed(response):
 
         if is_post_target(tweet_data, past_created_at):
             post_target.append(tweet_data)
