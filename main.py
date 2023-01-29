@@ -1,6 +1,6 @@
-import asyncio
 import csv
 import datetime
+import sqlite3
 import discord
 import string
 import twitter.auth
@@ -85,11 +85,13 @@ def is_post_target(tweet_data, past_created_at):
     """
     投稿の対象であるか確認する
     """
+    is_target_from_db = is_post_target_for_db(tweet_data.id)
 
     if past_created_at != None:
         return post_cond_detail(tweet_data, past_created_at)
-    elif tweet_data.referenced_tweets == None:
-        # 普通のツイート
+    elif tweet_data.referenced_tweets == None & \
+        is_target_from_db:
+        # 普通のツイートで過去にも出したことのあるツイートではない。
         return True
     elif (tweet_data.referenced_tweets[0].type != "replied_to") :
         # 過去の情報が全くない(初めて動かす)ときは、リプライ以外は対象にする。
@@ -113,6 +115,28 @@ def post_cond_detail(tweet_data, past_created_at):
     
     return False
 
+
+def is_post_target_for_db(tweet_id):
+    """
+    DBから検索してみて、今投稿しようとしているものが
+    過去に投稿したものであるか確認する。
+    """
+
+    conf = twitter.conf.load_conf()
+    db_name = conf['db_name']
+    conn = sqlite3.connect(db_name)
+    cur = conn.cursor()
+
+    sql = """
+            SELECT COUNT(TWEET_ID) FROM PAST_TWEET WHERE TWEET_ID = ?
+        """
+    sql_result_list = cur.execute(sql, (str(tweet_id),)).fetchall()
+
+    for sql_result in sql_result_list:
+        if(sql_result[0] == 0):
+            return False
+        else:
+            return True
 
 @client.event
 async def on_ready():
